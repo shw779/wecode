@@ -1,0 +1,119 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Categories {
+  id         Int        @id @default(autoincrement())
+  name       String
+  created_at DateTime?  @default(now())
+  product    Products[]
+
+  @@map("categories")
+}
+
+model Products {
+  id                 Int                  @id @default(autoincrement())
+  korean_name        String
+  english_name       String
+  category_id        Int
+  description        String
+  created_at         DateTime?            @default(now())
+  categories         Categories           @relation(fields: [category_id], references: [id])
+  products_allergies Products_allergies[]
+  nutritions         Nutritions?
+  product_images     Product_images[]
+  DrinkLike          DrinkLike[]
+  Comment            Comment[]
+
+  @@map("products")
+}
+
+model Product_images {
+  id         Int       @id @default(autoincrement())
+  image_url  String
+  product_id Int
+  created_at DateTime? @default(now())
+  products   Products  @relation(fields: [product_id], references: [id])
+
+  @@map("product_images")
+}
+
+model Allergies {
+  id                 Int                  @id @default(autoincrement())
+  name               String
+  created_at         DateTime?            @default(now())
+  products_allergies Products_allergies[]
+
+  @@map("allergies")
+}
+
+model Products_allergies {
+  id         Int       @id @default(autoincrement())
+  product_id Int
+  allergy_id Int
+  created_at DateTime? @default(now())
+  products   Products  @relation(fields: [product_id], references: [id])
+  allergies  Allergies @relation(fields: [allergy_id], references: [id])
+
+  @@map("products_allergies")
+}
+
+model Nutritions {
+  id         Int       @id @default(autoincrement())
+  product_id Int       @unique
+  caffein    Int
+  fat        Int
+  sugar      Int
+  sodium     Int
+  calories   Int
+  created_at DateTime? @default(now())
+  product    Products  @relation(fields: [product_id], references: [id])
+
+  @@map("nutritions")
+}
+
+model Users {
+  id            Int         @id @default(autoincrement())
+  email         String      @unique
+  password      String
+  username      String?
+  address       String?
+  phone_number  String?
+  policy_agreed Boolean     @default(true)
+  DrinkLike     DrinkLike[]
+  Comment       Comment[]
+
+  @@map("user")
+}
+
+model DrinkLike {
+  id         Int      @id @default(autoincrement())
+  isLike     Boolean  @default(false)
+  product_id Int
+  user_id    Int
+  products   Products @relation(fields: [product_id], references: [id])
+  users      Users    @relation(fields: [user_id], references: [id])
+
+  @@map("drinkLike")
+}
+
+model Comment {
+  id         Int       @id @default(autoincrement())
+  comment    String
+  product_id Int
+  user_id    Int
+  parent_id  Int?
+  created_at DateTime? @default(now())
+  products   Products  @relation(fields: [product_id], references: [id])
+  users      Users     @relation(fields: [user_id], references: [id])
+
+  @@map("comment")
+}

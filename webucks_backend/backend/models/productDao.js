@@ -17,11 +17,24 @@ const getDrinkList = async () => {
     `
 }
 
-const getDetailList = async () => {
+const getDetailList = async (id) => {
     return await prisma.$queryRaw`
-    SELECT  products.id, products.korean_name, products.english_name, product_images.image_url, products.description
+    SELECT  products.id, products.korean_name, products.english_name, products.description,
+       product_images.image_url,
+	   JSON_ARRAYAGG(a.name),
+	   JSON_OBJECT(
+		'caffein', nutritions.caffein, 
+		'fat', nutritions.fat, 
+		'sugar', nutritions.sugar, 
+		'sodium', nutritions.sodium, 
+		'calories', nutritions.calories) AS nutritonsInfo
     FROM products
+    LEFT JOIN products_allergies pa ON pa.product_id = products.id
+    LEFT JOIN allergies a ON pa.allergy_id = a.id
     INNER JOIN product_images ON product_images.product_id=products.id
+    INNER JOIN nutritions ON products.id = nutritions.product_id
+    GROUP BY products.id
+    HAVING products.id = ${id};
     `
 }
 

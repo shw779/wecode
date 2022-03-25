@@ -23,7 +23,7 @@ const updateComment = async(id,user_id, comment, product_id, parent_id) =>{
 
 const deleteComment = async(id) =>{
     return await prisma.$queryRaw`
-    DELETE FROM comment WHERE id = ${id};
+    UPDATE comment SET comment="삭제된 아이디입니다." WHERE id=${id};
     `
 }
 

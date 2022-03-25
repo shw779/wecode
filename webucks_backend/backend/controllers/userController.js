@@ -51,6 +51,7 @@ const updatePassword = async (req, res, next) => {
 const userLogin = async (req, res, next) => {
     try {
         const { email, password } = req.body
+        console.log("login!!!");
 
         if (email === undefined || password === undefined)
             errorService.ErrorProcess('KEY ERROR')
@@ -64,16 +65,6 @@ const userLogin = async (req, res, next) => {
     }
 }
 
-const verification = async (req, res, next) => {
-    try {
-        let check = jwt.verify(req.headers.token, 'secretKey');
-
-        return res.status(201).json({ message: 'SUCCESS' });
-    } catch (err) {
-        console.log(err);
-        return res.status(err.statusCode || 500).json({ message: err.message })
-    }
-}
 
 
-module.exports = { signUp, getUser, updatePassword, userLogin, verification }
+module.exports = { signUp, getUser, updatePassword, userLogin}

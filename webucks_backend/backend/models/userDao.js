@@ -28,7 +28,7 @@ const insertLike = async (index, id) =>{
 }
 const getUserPwdByEmail = async (email) =>{
     return await prisma.$queryRaw`
-        SELECT password FROM user WHERE email=${email};
+        SELECT id, password FROM user WHERE email=${email};
     `
 }
 const setUserPwd = async (password, email) =>{
@@ -36,4 +36,9 @@ const setUserPwd = async (password, email) =>{
     UPDATE user SET password=${password} WHERE email=${email};
     `
 }
-module.exports = {getUserByEmail, createdUser, insertLike, getUser, getUserPwdByEmail, setUserPwd}
+const getUserById = async (id) =>{
+    return await prisma.$queryRaw`
+        SELECT id FROM user WHERE id=${id};
+    `
+}
+module.exports = {getUserByEmail, createdUser, insertLike, getUser, getUserPwdByEmail, setUserPwd, getUserById}

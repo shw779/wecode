@@ -11,21 +11,8 @@ const getDrinkList = async (next) => {
     return getDrinkList
 }
 
-const getDetailList = async (next) => {
-    const getDetailList = await productDao.getDetailList();
-
-    for (let i = 0; i < getDetailList.length; i++) {
-
-        const getNutrition = await productDao.getNutrition(getDetailList[i]['id']);
-        getDetailList[i]['nutrition'] = (getNutrition.length !== 0) ? getNutrition[0] : {}
-
-        let getAllergies = await productDao.getAllergies(getDetailList[i]['id'])
-
-        let arr = [];
-        for (let j = 0; j < getAllergies.length; j++)
-            arr.push(getAllergies[j]['allergy']);
-        getDetailList[i]['allergies'] = arr;
-    }
+const getDetailList = async (id, next) => {
+    const getDetailList = await productDao.getDetailList(id);
     return getDetailList
 
 }

@@ -38,12 +38,12 @@ const userLogin = async (email, password, next) => {
 
     if (getUser.length == 0)
         errorService.ErrorProcess('INVALID USER')
-    console.log(getUser);
+
     let flag = bcrypt.compareSync(password, getUser[0]['password']); // true
     if (!flag)
         errorService.ErrorProcess('INVALID USER')
 
-    const makeToken = jwt.sign({ 'test': 'test' }, process.env.SECRETKEY, { expiresIn: '1h' })
+    const makeToken = jwt.sign({ 'id': getUser[0]['id'] }, process.env.SECRETKEY, { expiresIn: '1h' })
 
     return makeToken
 }
@@ -65,4 +65,13 @@ const updatePassword = async (email, password, next) => {
     return setUsers
 }
 
-module.exports = { signUp, getUser, updatePassword, userLogin }
+const getUserById = async (id) => {
+    const getUserById = await userDao.getUserById(id);
+
+    if (getUserById.length == 0)
+        errorService.ErrorProcess('NOT EXIST USER');
+    
+    return getUserById
+}
+
+module.exports = { signUp, getUser, updatePassword, userLogin, getUserById}

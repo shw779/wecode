@@ -27,7 +27,8 @@ const getDrinkList = async (req, res, next) => {
 
 const getDetailList = async (req, res, next) => {
     try {
-        const category = await productService.getDetailList(next);
+        const id = req.body
+        const category = await productService.getDetailList(id['id'],next);
 
         return res.status(201).json({ data: category })
     } catch (err) {

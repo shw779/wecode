@@ -4,11 +4,17 @@ const jwt = require('jsonwebtoken')
 
 const verification = async (req, res, next) => {
     try {
-        const {id} = jwt.verify(req.headers.token, 'secretKey');
+        let token = req.headers.token;
+        if (!token)
+            errorService.ErrorProcess("TOKEN IS NOT EXIST")
+
+        const { id } = jwt.verify(token, process.env.SECRETKEY);
+        
         const getUser = await userService.getUserById(id);
-        console.log("hello :1", getUser);
+        if(!getUser)
+            errorService.ErrorProcess("NOT EXIST USER")
+        
         next()
-        //return res.status(201).json({ message: 'SUCCESS' });
     } catch (err) {
         console.log(err);
         return res.status(err.statusCode || 500).json({ message: err.message })
@@ -16,4 +22,4 @@ const verification = async (req, res, next) => {
 }
 
 
-module.exports = {verification}
+module.exports = { verification }
